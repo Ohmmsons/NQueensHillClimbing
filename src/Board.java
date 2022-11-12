@@ -1,5 +1,7 @@
 import java.util.*;
 
+import static java.lang.Math.abs;
+
 class Board implements Ilayout, Cloneable {
 
     int n;
@@ -10,24 +12,43 @@ class Board implements Ilayout, Cloneable {
 
     Random r = new Random();
 
+    private record Pair(int x, int y){}
+
+
     //THE BOARD IS MADE UP OF N QUEENS, ALL ON DIFFERENT ROWS TO SIMPLIFY THE PROBLEM
     public Board(int m) throws IllegalStateException {
         n = m;
         board = new boolean[n][n];
         cols = new int[n];
-        ldiags = new int[n*2-1];
-        rdiags = new int[n*2-1];
+        ldiags = new int[n*2-3];
+        rdiags = new int[n*2-3];
+        Pair queenCoords[] = new Pair[n];
         //CREATE RANDOM BOARD WITH NO QUEENS ON THE SAME AND INITIALIZE COLS LDIAGS AND RDIAGS
         for(int i = 0; i<n; i++){
-            board[i][r.nextInt(n)] = true;
+            int result = 0;
+            int j = r.nextInt(n);
+            board[i][j] = true;
+            queenCoords[result++] = new Pair(i,j);
         }
         for(int i = 0; i<cols.length; i++){
             for(int j = 0; j<n; j++)
                 if(board[i][j]) cols[j]++;
         }
+        //Calcular rainhas em cada diagonal esquerda
         for(int i = 0; i<ldiags.length; i++){
-            //Calcular rainhas em cada diagonal esquerda
+            int result = 0;
+            Pair actualQueen = queenCoords[i];
+            int x = queenCoords[i].x;
+            int y = queenCoords[i].y;
+            //if(x == 0 && y == 0 || x == n-1 && y == n-1 || x == 0 && y == n-1 || x == n-1 && y == 0)break; //caso a rainha esteja num dos cantos
+            while(result<n) {
+                Pair otherQueen = queenCoords[result++];
+                int rowDif = abs(actualQueen.x - otherQueen.x);
+                int colDif = abs(actualQueen.y - otherQueen.y);
+                if(rowDif == colDif) ldiags[i]++;
+            }
         }
+
         for(int i = 0; i< rdiags.length; i++){
             //Calcular rainhas em cada diagonal direita
         }
@@ -44,9 +65,9 @@ class Board implements Ilayout, Cloneable {
     public Ilayout getSuccessor() {
         Board clone = this.clone();
         //MOVE A RANDOM QUEEN TO A RANDOM SQUARE ON THE SAME ROW AND UPDATE COLS LDIAGS AND RDIAGS
-        int r1 = r.nextInt(n);
-        int r2 = r.nextInt(n);
-        int index = clone.queenInRowIndex(r1);
+        int r1 = r.nextInt(n); //linha que vamos selecionar a rainha
+        int r2 = r.nextInt(n); //nova coluna que vai ser posta
+        int index = clone.queenInRowIndex(r1); // coluna que a rainha esta
         clone.board[r1][index] = false;
         clone.board[r1][r2] = true;
         //FALTA ATUALIZAR OS LDIAGS E RDIAGS
