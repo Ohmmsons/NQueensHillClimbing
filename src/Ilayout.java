@@ -6,7 +6,7 @@ public interface Ilayout {
     Ilayout getSuccessor();
 
     /**
-     @return number of conflicts.
+     @return objective function.
      */
     int getObjectiveFunction();
 }

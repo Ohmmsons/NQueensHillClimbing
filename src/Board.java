@@ -37,6 +37,8 @@ class Board implements Ilayout, Cloneable {
         return "Conflicts = " + getObjectiveFunction();
     }
 
+    private record Pair(int x, int y){}
+
     public int hashCode() {
         return Arrays.hashCode(cols) + Arrays.hashCode(ldiags) + Arrays.hashCode(rdiags);
     }
