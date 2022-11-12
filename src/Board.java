@@ -10,7 +10,8 @@ class Board implements Ilayout, Cloneable {
 
     Random r = new Random();
 
-    public Board(int m) throws IllegalStateException { //Simulates a two dimensional board using a String by filling in the empty spaces with " "
+    //THE BOARD IS MADE UP OF N QUEENS, ALL ON DIFFERENT ROWS TO SIMPLIFY THE PROBLEM
+    public Board(int m) throws IllegalStateException {
         n = m;
         board = new boolean[n][n];
         cols = new int[n];
@@ -41,16 +42,41 @@ class Board implements Ilayout, Cloneable {
     }
 
     public Ilayout getRandomSuccessor() {
-        //MOVE A RANDOM QUEEN TO A RANDOM UNOCCUPIED SQUARE AND UPDATE NCONFLICTS
-        return null;
+        Board clone = this.clone();
+        //MOVE A RANDOM QUEEN TO A RANDOM SQUARE ON THE SAME ROW AND UPDATE COLS LDIAGS AND RDIAGS
+        int r1 = r.nextInt(n);
+        int r2 = r.nextInt(n);
+        int index = clone.queenInRowIndex(r1);
+        clone.board[r1][index] = false;
+        clone.board[r1][r2] = true;
+        //FALTA ATUALIZAR OS LDIAGS E RDIAGS
+        clone.cols[index]--;
+        clone.cols[r2]++;
+        //clone.ldiags[???]--;
+        //clone.ldiags[???]++;
+        //clone.rdiags[???]--;
+        //clone.rdiags[???]++;
+        return clone;
+    }
+
+    private int queenInRowIndex(int row){
+        for(int i = 0; i<n; i++){
+            if(board[row][i])
+                return i;
+        }
+        return -1;
     }
 
     public int getConflicts() {
         int nconflicts = 0;
-        for(int i = 0;i < n; i++){
-            if(cols[i]>1) nconflicts++;
-            if(rdiags[i]>1) nconflicts++;
-            if(ldiags[i]>1) nconflicts++;
+        //Check Conflicts in columns
+        for(int i = 0; i<n; i++){
+            if(cols[i]>1) nconflicts+=cols[i]-1;
+        }
+        //Check Conflicts in diagonals
+        for(int i = 0;i < rdiags.length; i++){
+            if(rdiags[i]>1) nconflicts+= rdiags[i]-1;
+            if(ldiags[i]>1) nconflicts+= ldiags[i]-1;
         }
         return nconflicts;
     }
