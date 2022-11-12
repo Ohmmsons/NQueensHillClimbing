@@ -34,12 +34,18 @@ public class HillClimb{
 
     final public Ilayout solve(Ilayout s) {
         State current = new State(s);
+        int noImprove = 0; // Counts non improving states
         while (current.getOF()>0){
             State next = new State(current.layout.getSuccessor());
-            if(next.getOF()<current.getOF())
+            if(next.getOF()<current.getOF()) {
                 current = next;
+                noImprove = 0;
+            }
+            else
+                noImprove++;
+            if(noImprove>100)
+                current=new State(s); //Start again after 100 non improving states (give up and retry from start)
         }
         return current.layout;
     }
-
 }
