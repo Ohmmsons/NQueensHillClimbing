@@ -3,12 +3,12 @@ public interface Ilayout {
     /**
      @return a random successor of the receiver.
      */
-    Ilayout getRandomSuccessor();
+    Ilayout getSuccessor();
 
     /**
      @return number of conflicts.
      */
-    int getConflicts();
+    int getObjectiveFunction();
 }
 
 

@@ -5,19 +5,19 @@ public class HillClimb{
     static class State {
         private Ilayout layout;
         private Ilayout goal;
-        private double nc;
+        private double of;
 
         public State(Ilayout l) {
             layout = l;
-            nc = l.getConflicts();
+            of = l.getObjectiveFunction();
         }
 
         public String toString() {
             return layout.toString();
         }
 
-        public double getNC() {
-            return nc;
+        public double getOf() {
+            return of;
         }
 
         public int hashCode() {
@@ -34,9 +34,9 @@ public class HillClimb{
 
     final public Ilayout solve(Ilayout s) {
         State current = new State(s);
-        while (current.layout.getConflicts()>0){
-            State next = new State(current.layout.getRandomSuccessor());
-            if(next.getNC()<current.getNC())
+        while (current.getOf()>0){
+            State next = new State(current.layout.getSuccessor());
+            if(next.getOf()<current.getOf())
                 current = next;
         }
         return current.layout;

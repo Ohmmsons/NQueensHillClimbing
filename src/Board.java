@@ -34,14 +34,14 @@ class Board implements Ilayout, Cloneable {
     }
 
     public String toString() {
-        return "Conflicts = " + getConflicts();
+        return "Conflicts = " + getObjectiveFunction();
     }
 
     public int hashCode() {
         return Arrays.hashCode(cols) + Arrays.hashCode(ldiags) + Arrays.hashCode(rdiags);
     }
 
-    public Ilayout getRandomSuccessor() {
+    public Ilayout getSuccessor() {
         Board clone = this.clone();
         //MOVE A RANDOM QUEEN TO A RANDOM SQUARE ON THE SAME ROW AND UPDATE COLS LDIAGS AND RDIAGS
         int r1 = r.nextInt(n);
@@ -67,7 +67,7 @@ class Board implements Ilayout, Cloneable {
         return -1;
     }
 
-    public int getConflicts() {
+    public int getObjectiveFunction() {
         int nconflicts = 0;
         //Check Conflicts in columns
         for(int i = 0; i<n; i++){
