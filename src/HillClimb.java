@@ -16,7 +16,7 @@ public class HillClimb{
             return layout.toString();
         }
 
-        public double getOf() {
+        public double getOF() {
             return of;
         }
 
@@ -34,9 +34,9 @@ public class HillClimb{
 
     final public Ilayout solve(Ilayout s) {
         State current = new State(s);
-        while (current.getOf()>0){
+        while (current.getOF()>0){
             State next = new State(current.layout.getSuccessor());
-            if(next.getOf()<current.getOf())
+            if(next.getOF()<current.getOF())
                 current = next;
         }
         return current.layout;
