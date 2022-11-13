@@ -38,19 +38,35 @@ class Board implements Ilayout, Cloneable {
         for(int i = 0; i<ldiags.length; i++){
             int result = 0;
             Pair actualQueen = queenCoords[i];
-            int x = queenCoords[i].x;
-            int y = queenCoords[i].y;
+            int x = actualQueen.x;
+            int y = actualQueen.y;
             //if(x == 0 && y == 0 || x == n-1 && y == n-1 || x == 0 && y == n-1 || x == n-1 && y == 0)break; //caso a rainha esteja num dos cantos
             while(result<n) {
                 Pair otherQueen = queenCoords[result++];
-                int rowDif = abs(actualQueen.x - otherQueen.x);
-                int colDif = abs(actualQueen.y - otherQueen.y);
-                if(rowDif == colDif) ldiags[i]++;
+                int x1 = otherQueen.x;
+                int y1 = otherQueen.y;
+                if(x1 > x && y1 < y || x1 < x && y1 > y) break; //verificar se pode ser ldiag
+                int rowDif = abs(x - x1);
+                int colDif = abs(x - y1);
+                if(rowDif == colDif) ldiags[x1+y1]++;
             }
         }
-
+        //Calcular rainhas em cada diagonal direita
         for(int i = 0; i< rdiags.length; i++){
-            //Calcular rainhas em cada diagonal direita
+            int result = 0;
+            Pair actualQueen = queenCoords[i];
+            int x = actualQueen.x;
+            int y = actualQueen.y;
+            //if(x == 0 && y == 0 || x == n-1 && y == n-1 || x == 0 && y == n-1 || x == n-1 && y == 0)break; //caso a rainha esteja num dos cantos
+            while(result<n) {
+                Pair otherQueen = queenCoords[result++];
+                int x1 = otherQueen.x;
+                int y1 = otherQueen.y;
+                if(x1 > x && y1 > y || x1 < x && y1 < y) break; //verificar se pode ser rdiag
+                int rowDif = abs(x - x1);
+                int colDif = abs(x - y1);
+                if(rowDif == colDif) rdiags[x1+y1]++;
+            }
         }
     }
 
