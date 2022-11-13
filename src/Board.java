@@ -5,7 +5,7 @@ import java.util.Random;
 class Board implements Ilayout, Cloneable {
 
     int n;
-    boolean[][] board; // Ocupado = true
+    int[] board; // Ocupado = true
     int[] cols;
     int[] ldiags;
     int[] rdiags;
@@ -18,29 +18,25 @@ class Board implements Ilayout, Cloneable {
     //THE BOARD IS MADE UP OF N QUEENS, ALL ON DIFFERENT ROWS TO SIMPLIFY THE PROBLEM
     public Board(int m) throws IllegalStateException {
         n = m;
-        board = new boolean[n][n];
+        board = new int[n];
         cols = new int[n];
         ldiags = new int[n*2-1];
         rdiags = new int[n*2-1];
         //CREATE RANDOM BOARD WITH NO QUEENS ON THE SAME AND INITIALIZE COLS LDIAGS AND RDIAGS
         for(int i = 0; i<n; i++){
-            int result = 0;
-            int j = r.nextInt(n);
-            board[i][j] = true;
+            board[i] = r.nextInt(n);
         }
         for(int i = 0; i<n; i++){
-            for(int j = 0; j<n; j++)
-                if(board[i][j]) {
-                    cols[j]++;
-                    ldiags[i>j?(n-1)-Math.abs(i-j) : (n-1+Math.abs(i-j))]++;
-                    rdiags[i+j]++;
-                }
+            int j = board[i];
+            cols[j]++;
+            ldiags[i>j?(n-1)-Math.abs(i-j) : (n-1+Math.abs(i-j))]++;
+            rdiags[i+j]++;
         }
     }
 
     public Board(int m, boolean b){
         n = m;
-        board = new boolean[n][n];
+        board = new int[n];
         cols = new int[n];
         ldiags = new int[n*2-1];
         rdiags = new int[n*2-1];
@@ -70,9 +66,8 @@ class Board implements Ilayout, Cloneable {
         int r1 = r.nextInt(n); //linha que vamos selecionar a rainha
         int r2 = r.nextInt(n);
         if(!ec.isEmpty()) r2 = ec.get(r.nextInt(ec.size()));
-        int index = clone.queenInRowIndex(r1); // coluna que a rainha esta
-        clone.board[r1][index] = false;
-        clone.board[r1][r2] = true;
+        int index = clone.board[r1]; // coluna que a rainha esta
+        clone.board[r1] = r2;
         clone.cols[index]--;
         clone.cols[r2]++;
         clone.ldiags[r1>index ? (n-1)-Math.abs(r1-index) : (n-1)+Math.abs(r1-index)]--;
@@ -88,13 +83,6 @@ class Board implements Ilayout, Cloneable {
         for(int i = 0; i<n; i++)
             if(cols[i]==0) list.add(i);
         return list;
-    }
-    private int queenInRowIndex(int row){
-        for(int i = 0; i<n; i++){
-            if(board[row][i])
-                return i;
-        }
-        return -1;
     }
 
     public int getObjectiveFunction() {
@@ -114,8 +102,7 @@ class Board implements Ilayout, Cloneable {
     public Board clone() {
         Board clone = new Board(n,true);
         for(int i = 0; i<n; i++){
-            for(int j = 0; j<n;j++)
-                clone.board[i][j] = this.board[i][j];
+            clone.board[i] = this.board[i];
             clone.cols[i] = this.cols[i];
         }
         for(int i = 0; i<ldiags.length; i++){
