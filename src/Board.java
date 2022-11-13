@@ -20,8 +20,8 @@ class Board implements Ilayout, Cloneable {
         n = m;
         board = new boolean[n][n];
         cols = new int[n];
-        ldiags = new int[n*2-3];
-        rdiags = new int[n*2-3];
+        ldiags = new int[n*2-1];
+        rdiags = new int[n*2-1];
         Pair queenCoords[] = new Pair[n];
         //CREATE RANDOM BOARD WITH NO QUEENS ON THE SAME AND INITIALIZE COLS LDIAGS AND RDIAGS
         for(int i = 0; i<n; i++){
@@ -34,20 +34,28 @@ class Board implements Ilayout, Cloneable {
             for(int j = 0; j<n; j++)
                 if(board[i][j]) {
                     cols[j]++;
-                    //ldiags[???]++;
-                    //rdiags[???]++;
+                    ldiags[i>j?(n-1)-Math.abs(i-j) : (n-1+Math.abs(i-j))]++;
+                    rdiags[i+j]++;
                 }
         }
     }
 
-    private Pair rcToDiagonals(int i,int j){
-        int ld = 0;
-        int rd = 0;
-        return new Pair(ld,rd);
+    public Board(int m, boolean b){
+        n = m;
+        board = new boolean[n][n];
+        cols = new int[n];
+        ldiags = new int[n*2-1];
+        rdiags = new int[n*2-1];
     }
-
-    public String toString() {
-        return "Conflicts = " + getObjectiveFunction();
+    public String toString(){
+        StringBuilder str = new StringBuilder();
+        str.append("Conflicts = " + getObjectiveFunction()+"\n") ;
+        for(int i = 0; i < board.length; i++){
+            for (int j = 0; j < board[i].length; j++)
+                str.append(board[i][j] ? "👑" + " " : "🔲" + " ");
+            str.append("\n");
+        }
+        return str.toString();
     }
 
 
@@ -63,13 +71,12 @@ class Board implements Ilayout, Cloneable {
         int index = clone.queenInRowIndex(r1); // coluna que a rainha esta
         clone.board[r1][index] = false;
         clone.board[r1][r2] = true;
-        //FALTA ATUALIZAR OS LDIAGS E RDIAGS
         clone.cols[index]--;
         clone.cols[r2]++;
-        //clone.ldiags[???]--;
-        //clone.ldiags[???]++;
-        //clone.rdiags[???]--;
-        //clone.rdiags[???]++;
+        clone.ldiags[r1>index ? (n-1)-Math.abs(r1-index) : (n-1)+Math.abs(r1-index)]--;
+        clone.rdiags[r1+index]--;
+        clone.ldiags[r1>r2 ? (n-1)-Math.abs(r1-r2) : (n-1)+Math.abs(r1-r2)]++;
+        clone.rdiags[r1+r2]++;
         return clone;
     }
 
@@ -96,11 +103,17 @@ class Board implements Ilayout, Cloneable {
     }
 
     public Board clone() {
-        try {
-            return (Board) super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new AssertionError();
+        Board clone = new Board(n,true);
+        for(int i = 0; i<n; i++){
+            for(int j = 0; j<n;j++)
+                clone.board[i][j] = this.board[i][j];
+            clone.cols[i] = this.cols[i];
         }
+        for(int i = 0; i<ldiags.length; i++){
+            clone.ldiags[i] = this.ldiags[i];
+            clone.rdiags[i] = this.rdiags[i];
+        }
+        return clone;
     }
 }
 
