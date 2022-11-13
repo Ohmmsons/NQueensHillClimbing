@@ -1,11 +1,12 @@
-import java.util.*;
-
-import static java.lang.Math.abs;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 
 class Board implements Ilayout, Cloneable {
 
     int n;
-    boolean[][] board; // Ocupado = true
+    String board; // Ocupado = true
     int[] cols;
     int[] ldiags;
     int[] rdiags;
@@ -14,25 +15,38 @@ class Board implements Ilayout, Cloneable {
 
     private record Pair(int x, int y){}
 
+    private String randomLine(){
+        return shuffle(String.format("%" + (n - 1) + "s", " ") + "X");
+    }
+
+    public String shuffle(String input){
+        List<Character> characters = new ArrayList<>();
+        for(char c:input.toCharArray()){
+            characters.add(c);
+        }
+        StringBuilder output = new StringBuilder(input.length());
+        while(characters.size()!=0){
+            int randPicker = (int)(Math.random()*characters.size());
+            output.append(characters.remove(randPicker));
+        }
+        return output.toString();
+    }
+
 
     //THE BOARD IS MADE UP OF N QUEENS, ALL ON DIFFERENT ROWS TO SIMPLIFY THE PROBLEM
     public Board(int m) throws IllegalStateException {
         n = m;
-        board = new boolean[n][n];
+        board = "";
         cols = new int[n];
         ldiags = new int[n*2-1];
         rdiags = new int[n*2-1];
-        Pair queenCoords[] = new Pair[n];
         //CREATE RANDOM BOARD WITH NO QUEENS ON THE SAME AND INITIALIZE COLS LDIAGS AND RDIAGS
         for(int i = 0; i<n; i++){
-            int result = 0;
-            int j = r.nextInt(n);
-            board[i][j] = true;
-            queenCoords[result++] = new Pair(i,j);
+            board+=randomLine();
         }
         for(int i = 0; i<n; i++){
             for(int j = 0; j<n; j++)
-                if(board[i][j]) {
+                if(board.charAt(i*n+j) == 'X'){
                     cols[j]++;
                     ldiags[i>j?(n-1)-Math.abs(i-j) : (n-1+Math.abs(i-j))]++;
                     rdiags[i+j]++;
@@ -42,7 +56,7 @@ class Board implements Ilayout, Cloneable {
 
     public Board(int m, boolean b){
         n = m;
-        board = new boolean[n][n];
+        board = "";
         cols = new int[n];
         ldiags = new int[n*2-1];
         rdiags = new int[n*2-1];
@@ -50,39 +64,45 @@ class Board implements Ilayout, Cloneable {
     public String toString(){
         StringBuilder str = new StringBuilder();
         str.append("Conflicts = " + getObjectiveFunction()+"\n") ;
-        for(int i = 0; i < board.length; i++){
-            for (int j = 0; j < board[i].length; j++)
-                str.append(board[i][j] ? "👑" + " " : "🔲" + " ");
-            str.append("\n");
-        }
+//        for(int i = 0; i < n; i++){
+//            for (int j = 0; j < n; j++)
+//                str.append(board.charAt(i*n+j) == 'X' ? "👑" + " " : "🔲" + " ");
+//            str.append("\n");
+//        }
         return str.toString();
     }
 
-
     public int hashCode() {
-        return Arrays.hashCode(cols) + Arrays.hashCode(ldiags) + Arrays.hashCode(rdiags);
+        return board.hashCode();
     }
 
     public Ilayout getSuccessor() {
-        Board clone = this.clone();
-        //MOVE A RANDOM QUEEN TO A RANDOM SQUARE ON THE SAME ROW AND UPDATE COLS LDIAGS AND RDIAGS
+        Board clone;
+        clone = this.clone();
         int r1 = r.nextInt(n); //linha que vamos selecionar a rainha
         int r2 = r.nextInt(n); //nova coluna que vai ser posta
         int index = clone.queenInRowIndex(r1); // coluna que a rainha esta
-        clone.board[r1][index] = false;
-        clone.board[r1][r2] = true;
+        clone.board = switchPlaces(clone.board,r1*n+index,r1*n+r2);
         clone.cols[index]--;
         clone.cols[r2]++;
-        clone.ldiags[r1>index ? (n-1)-Math.abs(r1-index) : (n-1)+Math.abs(r1-index)]--;
-        clone.rdiags[r1+index]--;
-        clone.ldiags[r1>r2 ? (n-1)-Math.abs(r1-r2) : (n-1)+Math.abs(r1-r2)]++;
-        clone.rdiags[r1+r2]++;
+        clone.ldiags[r1 > index ? (n - 1) - Math.abs(r1 - index) : (n - 1) + Math.abs(r1 - index)]--;
+        clone.rdiags[r1 + index]--;
+        clone.ldiags[r1 > r2 ? (n - 1) - Math.abs(r1 - r2) : (n - 1) + Math.abs(r1 - r2)]++;
+        clone.rdiags[r1 + r2]++;
         return clone;
+    }
+
+    public String switchPlaces(String s, int i, int j) {
+        char[] b = s.toCharArray();
+        char old = b[i];
+        b[i] = b[j];
+        b[j] = old;
+        return new String(b);
     }
 
     private int queenInRowIndex(int row){
         for(int i = 0; i<n; i++){
-            if(board[row][i])
+            if(board.charAt(row*n+i) == 'X')
                 return i;
         }
         return -1;
@@ -104,15 +124,10 @@ class Board implements Ilayout, Cloneable {
 
     public Board clone() {
         Board clone = new Board(n,true);
-        for(int i = 0; i<n; i++){
-            for(int j = 0; j<n;j++)
-                clone.board[i][j] = this.board[i][j];
-            clone.cols[i] = this.cols[i];
-        }
-        for(int i = 0; i<ldiags.length; i++){
-            clone.ldiags[i] = this.ldiags[i];
-            clone.rdiags[i] = this.rdiags[i];
-        }
+        clone.cols = Arrays.copyOf(cols,cols.length);
+        clone.ldiags = Arrays.copyOf(ldiags,ldiags.length);
+        clone.rdiags = Arrays.copyOf(rdiags,rdiags.length);
+        clone.board = board;
         return clone;
     }
 }

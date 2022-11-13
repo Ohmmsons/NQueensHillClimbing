@@ -1,5 +1,3 @@
-import java.util.*;
-
 public class HillClimb{
 
     static class State {
@@ -32,11 +30,12 @@ public class HillClimb{
         }
     }
 
+
     final public Ilayout solve(Ilayout s) {
         State current = new State(s);
         while (current.getOF()>0){
             State next = new State(current.layout.getSuccessor());
-            if(next.getOF()<current.getOF()) {
+            if(next.getOF()<=current.getOF()) {
                 current = next;
                 System.out.println(current.layout);
             }
