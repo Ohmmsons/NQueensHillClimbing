@@ -5,10 +5,11 @@ import java.util.Random;
 class Board implements Ilayout, Cloneable {
 
     int n;
-    int[] board; // Ocupado = true
+    int[] board;
     int[] cols;
     int[] ldiags;
     int[] rdiags;
+
 
     Random r = new Random();
 
@@ -60,8 +61,6 @@ class Board implements Ilayout, Cloneable {
 
         return str.toString();
     }
-
-
     public int hashCode() {
         return Arrays.hashCode(cols) + Arrays.hashCode(ldiags) + Arrays.hashCode(rdiags);
     }

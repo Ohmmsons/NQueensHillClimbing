@@ -2,7 +2,6 @@ public class HillClimb{
 
     static class State {
         private Ilayout layout;
-        private Ilayout goal;
         private double of;
 
         public State(Ilayout l) {
