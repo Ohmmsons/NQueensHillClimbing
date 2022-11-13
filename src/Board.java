@@ -14,6 +14,7 @@ class Board implements Ilayout, Cloneable {
 
     private record Pair(int x, int y){}
 
+    int conflicts;
 
     //THE BOARD IS MADE UP OF N QUEENS, ALL ON DIFFERENT ROWS TO SIMPLIFY THE PROBLEM
     public Board(int m) throws IllegalStateException {
@@ -32,6 +33,18 @@ class Board implements Ilayout, Cloneable {
             ldiags[i>j?(n-1)-Math.abs(i-j) : (n-1+Math.abs(i-j))]++;
             rdiags[i+j]++;
         }
+        int nconflicts = 0;
+        //Check Conflicts in columns
+        for(int i = 0; i<n; i++){
+            if(cols[i]>1) nconflicts+=cols[i]-1;
+        }
+        //Check Conflicts in diagonals
+        for(int i = 0;i < rdiags.length; i++){
+            if(rdiags[i]>1) nconflicts+= rdiags[i]-1;
+            if(ldiags[i]>1) nconflicts+= ldiags[i]-1;
+        }
+
+        conflicts=nconflicts;
     }
 
     public Board(int m, boolean b){
@@ -44,11 +57,12 @@ class Board implements Ilayout, Cloneable {
     public String toString(){
         StringBuilder str = new StringBuilder();
         str.append("Conflicts = " + getObjectiveFunction()+"\n") ;
-//        for(int i = 0; i < board.length; i++){
-//            for (int j = 0; j < board[i].length; j++)
-//                str.append(board[i][j] ? "👑" + " " : "🔲" + " ");
-//            str.append("\n");
-//        }
+        for(int i = 0; i < board.length; i++){
+            str.append("⬜".repeat(Math.max(0, board[i])));
+            str.append("👑");
+            str.append("⬜".repeat(Math.max(0, n - 1 - board[i])));
+            str.append("\n");
+        }
         return str.toString();
     }
 
@@ -70,13 +84,26 @@ class Board implements Ilayout, Cloneable {
         clone.board[r1] = r2;
         clone.cols[index]--;
         clone.cols[r2]++;
-        clone.ldiags[r1>index ? (n-1)-Math.abs(r1-index) : (n-1)+Math.abs(r1-index)]--;
-        clone.rdiags[r1+index]--;
-        clone.ldiags[r1>r2 ? (n-1)-Math.abs(r1-r2) : (n-1)+Math.abs(r1-r2)]++;
-        clone.rdiags[r1+r2]++;
+        int ldiold = r1>index ? (n-1)-Math.abs(r1-index) : (n-1)+Math.abs(r1-index);
+        int ldinew = r1>r2 ? (n-1)-Math.abs(r1-r2) : (n-1)+Math.abs(r1-r2);
+        int rdiold = r1+index;
+        int rdinew = r1+r2;
+        clone.ldiags[ldiold]--;
+        clone.rdiags[rdiold]--;
+        clone.ldiags[ldinew]++;
+        clone.rdiags[rdinew]++;
+        int removedConflictsCols = cols[index]>1 ? 1 : 0;
+        int removedConflictsLDiags = ldiags[ldiold]>1 ? 1 : 0;
+        int removedConflictsRDiags = rdiags[rdiold]>1 ? 1 : 0;
+        int newConflictsCols = clone.cols[r2]>1 ? 1 :0;
+        int newConflictsLDiags = clone.ldiags[ldinew]>1 ? 1 : 0;
+        int newConflictsRDiags = clone.rdiags[ldinew]>1 ? 1 : 0;
+        clone.conflicts -= removedConflictsCols + removedConflictsLDiags + removedConflictsRDiags;
+        clone.conflicts += newConflictsCols + newConflictsLDiags + newConflictsRDiags;
         }while(clone.getObjectiveFunction()>of);
         return clone;
     }
+
 
      private ArrayList<Integer> emptyColumns(){
         ArrayList<Integer> list = new ArrayList<>();
@@ -86,17 +113,7 @@ class Board implements Ilayout, Cloneable {
     }
 
     public int getObjectiveFunction() {
-        int nconflicts = 0;
-        //Check Conflicts in columns
-        for(int i = 0; i<n; i++){
-            if(cols[i]>1) nconflicts+=cols[i]-1;
-        }
-        //Check Conflicts in diagonals
-        for(int i = 0;i < rdiags.length; i++){
-            if(rdiags[i]>1) nconflicts+= rdiags[i]-1;
-            if(ldiags[i]>1) nconflicts+= ldiags[i]-1;
-        }
-        return nconflicts;
+        return conflicts;
     }
 
     public Board clone() {
@@ -105,6 +122,7 @@ class Board implements Ilayout, Cloneable {
             clone.board[i] = this.board[i];
             clone.cols[i] = this.cols[i];
         }
+        clone.conflicts = this.conflicts;
         for(int i = 0; i<ldiags.length; i++){
             clone.ldiags[i] = this.ldiags[i];
             clone.rdiags[i] = this.rdiags[i];
