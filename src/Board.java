@@ -40,6 +40,12 @@ class Board implements Ilayout, Cloneable {
         }
     }
 
+    private Pair rcToDiagonals(int i,int j){
+        int ld = 0;
+        int rd = 0;
+        return new Pair(ld,rd);
+    }
+
     public String toString() {
         return "Conflicts = " + getObjectiveFunction();
     }
