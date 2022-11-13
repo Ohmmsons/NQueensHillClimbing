@@ -63,12 +63,12 @@ class Board implements Ilayout, Cloneable {
     }
     public String toString(){
         StringBuilder str = new StringBuilder();
-//        str.append("Conflicts = " + getObjectiveFunction()+"\n") ;
-        for(int i = 0; i < n; i++){
-            for (int j = 0; j < n; j++)
-                str.append(board.charAt(i*n+j) == 'X' ? "👑" + " " : "🔲" + " ");
-            str.append("\n");
-        }
+        str.append("Conflicts = " + getObjectiveFunction()+"\n") ;
+//        for(int i = 0; i < n; i++){
+//            for (int j = 0; j < n; j++)
+//                str.append(board.charAt(i*n+j) == 'X' ? "\uD83D\uDC51 " : "\uD83D\uDD32 ");
+//            str.append("\n");
+//        }
         return str.toString();
     }
 
@@ -76,22 +76,33 @@ class Board implements Ilayout, Cloneable {
         return board.hashCode();
     }
 
-    public Ilayout getSuccessor() {
+    public Ilayout getSuccessor(){
         Board clone;
-        clone = this.clone();
-        int r1 = r.nextInt(n); //linha que vamos selecionar a rainha
-        int r2 = r.nextInt(n); //nova coluna que vai ser posta
-        int index = clone.queenInRowIndex(r1); // coluna que a rainha esta
-        clone.board = switchPlaces(clone.board,r1*n+index,r1*n+r2);
-        clone.cols[index]--;
-        clone.cols[r2]++;
-        clone.ldiags[r1 > index ? (n - 1) - Math.abs(r1 - index) : (n - 1) + Math.abs(r1 - index)]--;
-        clone.rdiags[r1 + index]--;
-        clone.ldiags[r1 > r2 ? (n - 1) - Math.abs(r1 - r2) : (n - 1) + Math.abs(r1 - r2)]++;
-        clone.rdiags[r1 + r2]++;
+        int of = this.getObjectiveFunction();
+        ArrayList<Integer> ec = emptyColumns();
+        do{
+            clone = this.clone();
+            int r1 = r.nextInt(n); //linha que vamos selecionar a rainha
+            int index = clone.queenInRowIndex(r1); // coluna que a rainha esta
+            int r2 = r.nextInt(n);
+            if(!ec.isEmpty()) r2 = ec.get(r.nextInt(ec.size()));
+            clone.board = switchPlaces(clone.board,r1*n+index,r1*n+r2);
+            clone.cols[index]--;
+            clone.cols[r2]++;
+            clone.ldiags[r1 > index ? (n - 1) - Math.abs(r1 - index) : (n - 1) + Math.abs(r1 - index)]--;
+            clone.rdiags[r1 + index]--;
+            clone.ldiags[r1 > r2 ? (n - 1) - Math.abs(r1 - r2) : (n - 1) + Math.abs(r1 - r2)]++;
+            clone.rdiags[r1 + r2]++;
+        }while(clone.getObjectiveFunction()>of);
         return clone;
     }
 
+    private ArrayList<Integer> emptyColumns(){
+        ArrayList<Integer> list = new ArrayList<>();
+        for(int i = 0; i<n; i++)
+            if(cols[i]==0) list.add(i);
+        return list;
+    }
     public String switchPlaces(String s, int i, int j) {
         char[] b = s.toCharArray();
         char old = b[i];
