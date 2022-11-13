@@ -82,12 +82,12 @@ class Board implements Ilayout, Cloneable {
         if(!ec.isEmpty()) r2 = ec.get(r.nextInt(ec.size()));
         int index = clone.board[r1]; // coluna que a rainha esta
         clone.board[r1] = r2;
-        clone.cols[index]--;
-        clone.cols[r2]++;
-        int ldiold = r1>index ? (n-1)-Math.abs(r1-index) : (n-1)+Math.abs(r1-index);
-        int ldinew = r1>r2 ? (n-1)-Math.abs(r1-r2) : (n-1)+Math.abs(r1-r2);
-        int rdiold = r1+index;
-        int rdinew = r1+r2;
+        clone.cols[index]--;//coluna antiga
+        clone.cols[r2]++;//coluna nova
+        int ldiold = r1>index ? (n-1)-Math.abs(r1-index) : (n-1)+Math.abs(r1-index);//ldiagonal antiga
+        int ldinew = r1>r2 ? (n-1)-Math.abs(r1-r2) : (n-1)+Math.abs(r1-r2);//ldiagonal nova
+        int rdiold = r1+index;//rdiagonal antiga
+        int rdinew = r1+r2;//rdiagonal nova
         clone.ldiags[ldiold]--;
         clone.rdiags[rdiold]--;
         clone.ldiags[ldinew]++;
