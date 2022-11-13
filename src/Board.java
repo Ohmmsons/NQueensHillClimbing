@@ -63,12 +63,12 @@ class Board implements Ilayout, Cloneable {
     }
     public String toString(){
         StringBuilder str = new StringBuilder();
-        str.append("Conflicts = " + getObjectiveFunction()+"\n") ;
-//        for(int i = 0; i < n; i++){
-//            for (int j = 0; j < n; j++)
-//                str.append(board.charAt(i*n+j) == 'X' ? "👑" + " " : "🔲" + " ");
-//            str.append("\n");
-//        }
+//        str.append("Conflicts = " + getObjectiveFunction()+"\n") ;
+        for(int i = 0; i < n; i++){
+            for (int j = 0; j < n; j++)
+                str.append(board.charAt(i*n+j) == 'X' ? "👑" + " " : "🔲" + " ");
+            str.append("\n");
+        }
         return str.toString();
     }
 
