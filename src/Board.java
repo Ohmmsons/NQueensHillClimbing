@@ -57,12 +57,7 @@ class Board implements Ilayout, Cloneable {
     public String toString(){
         StringBuilder str = new StringBuilder();
         str.append("Conflicts = " + getObjectiveFunction()+"\n") ;
-        for(int i = 0; i < board.length; i++){
-            str.append("⬜".repeat(Math.max(0, board[i])));
-            str.append("👑");
-            str.append("⬜".repeat(Math.max(0, n - 1 - board[i])));
-            str.append("\n");
-        }
+
         return str.toString();
     }
 
@@ -97,8 +92,8 @@ class Board implements Ilayout, Cloneable {
         int removedConflictsRDiags = rdiags[rdiold]>1 ? 1 : 0;
         int newConflictsCols = clone.cols[r2]>1 ? 1 :0;
         int newConflictsLDiags = clone.ldiags[ldinew]>1 ? 1 : 0;
-        int newConflictsRDiags = clone.rdiags[ldinew]>1 ? 1 : 0;
-        clone.conflicts -= removedConflictsCols + removedConflictsLDiags + removedConflictsRDiags;
+        int newConflictsRDiags = clone.rdiags[rdinew]>1 ? 1 : 0;
+        clone.conflicts -= (removedConflictsCols + removedConflictsLDiags + removedConflictsRDiags);
         clone.conflicts += newConflictsCols + newConflictsLDiags + newConflictsRDiags;
         }while(clone.getObjectiveFunction()>of);
         return clone;
