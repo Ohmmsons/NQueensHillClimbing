@@ -95,7 +95,7 @@ class Board implements Ilayout, Cloneable {
         int newConflictsRDiags = clone.rdiags[rdinew]>1 ? 1 : 0;
         clone.conflicts -= (removedConflictsCols + removedConflictsLDiags + removedConflictsRDiags);
         clone.conflicts += newConflictsCols + newConflictsLDiags + newConflictsRDiags;
-        }while(clone.getObjectiveFunction()>of);
+        }while(clone.getObjectiveFunction()>of);//
         return clone;
     }
 
