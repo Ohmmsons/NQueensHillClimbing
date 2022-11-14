@@ -23,6 +23,7 @@ public class HillClimb{
             return toString().hashCode();
         }
 
+        public State getSuccessor(){return new State(layout.getSuccessor());}
         public boolean equals(Object o) {
             if (o == null) return false;
             if (this.getClass() != o.getClass()) return false;
@@ -33,14 +34,11 @@ public class HillClimb{
 
     final public Ilayout solve(Ilayout s) throws IOException {
         State current = new State(s);
-//        BufferedWriter fw = new BufferedWriter(new FileWriter("C:\\Users\\Ohm\\IdeaProjects\\NQueens\\out10000.csv"));
-//        int counter = 0;
         while (current.getOF()>0) {
-            current = new State(current.layout.getSuccessor());
-//            fw.write(counter++ + "," + current.getOF()+ "\n");
+            current = current.getSuccessor();
         }
-//        fw.flush();
-//        fw.close();
         return current.layout;
+
+
     }
 }
