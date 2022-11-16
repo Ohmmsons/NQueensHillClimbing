@@ -44,7 +44,7 @@ class SuperFastBoard implements Ilayout, Cloneable {
         shuffle(board);
         for (int i = 0; i < n; i++) {
             int j = board[i];
-            ldiags[i > j ? (n - 1) - Math.abs(i - j) : (n - 1 + Math.abs(i - j))]++;
+            ldiags[i-n-1 + j]++;
             rdiags[i + j]++;
         }
         int nconflicts = 0;
@@ -110,7 +110,7 @@ class SuperFastBoard implements Ilayout, Cloneable {
 
 
     private int lDiagIndex(int row, int column){
-        return row > column ? (n - 1) - Math.abs(row - column) : (n - 1) + Math.abs(row - column);
+        return row - n - 1 + column;
     }
 
     private int rDiagIndex(int row, int column){

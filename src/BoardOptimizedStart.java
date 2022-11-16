@@ -65,7 +65,7 @@ class BoardOptimizedStart implements Ilayout, Cloneable {
             for (int i = 0; i < n; i++) {
                 int j = board[i];
                 cols[j]++;
-                ldiags[i > j ? (n - 1) - Math.abs(i - j) : (n - 1 + Math.abs(i - j))]++;
+                ldiags[i-n-1 + j]++;
                 rdiags[i + j]++;
             }
             int nconflicts = 0;
@@ -116,8 +116,8 @@ class BoardOptimizedStart implements Ilayout, Cloneable {
         clone.board[r1] = r2;
         clone.cols[index]--;//coluna antiga
         clone.cols[r2]++;//coluna nova
-        int ldiold = r1 > index ? (n - 1) - Math.abs(r1 - index) : (n - 1) + Math.abs(r1 - index);//ldiagonal antiga
-        int ldinew = r1 > r2 ? (n - 1) - Math.abs(r1 - r2) : (n - 1) + Math.abs(r1 - r2);//ldiagonal nova
+        int ldiold = r1-n-1 + index;//ldiagonal antiga
+        int ldinew = r1-n-1 + r2;//ldiagonal nova
         int rdiold = r1 + index;//rdiagonal antiga
         int rdinew = r1 + r2;//rdiagonal nova
         clone.ldiags[ldiold]--;
