@@ -1,6 +1,6 @@
 import java.util.*;
 
-class BoardOptimizedStart implements Ilayout, Cloneable {
+class BoardSemiRandomStart implements Ilayout, Cloneable {
 
     int n;
     int[] board;
@@ -11,88 +11,55 @@ class BoardOptimizedStart implements Ilayout, Cloneable {
 
     Random r = new Random();
 
-    private record Pair(int x, int y){}
+    private record Pair(int x, int y) {
+    }
 
     int conflicts;
 
     //THE BOARD IS MADE UP OF N QUEENS, ALL ON DIFFERENT ROWS TO SIMPLIFY THE PROBLEM
-    public BoardOptimizedStart(int m) throws IllegalStateException {
-        do {
-            n = m;
-            board = new int[n];
-            cols = new int[n];
-            ldiags = new int[n * 2 - 1];
-            rdiags = new int[n * 2 - 1];
-
-            int column = r.nextInt(1, n);
-            int row = 0;
-            int save = column + 1;
-            if (column % 2 == 0) {
-                while (row < n) {
-                    if (column + 2 < n) {
-                        board[row] = column + 2;
-                        column += 2;
-                    } else {
-                        if (save == 2) {
-                            column = save;
-                            save++;
-                        } else {
-                            column = 1;
-                            save = 2;
-                        }
-                        board[row] = column;
-                    }
-                    row++;
-                }
-            } else {
-                while (row < n) {
-                    if (column + 2 < n) {
-                        board[row] = column + 2;
-                        column += 2;
-                    } else {
-                        if (save == 1) {
-                            column = save;
-                            save++;
-                        } else {
-                            column = 0;
-                            save = 1;
-                        }
-                        board[row] = column;
-                    }
-                    row++;
-                }
-            }
-            for (int i = 0; i < n; i++) {
-                int j = board[i];
-                cols[j]++;
-                ldiags[i > j ? (n - 1) - Math.abs(i - j) : (n - 1 + Math.abs(i - j))]++;
-                rdiags[i + j]++;
-            }
-            int nconflicts = 0;
-            //Check Conflicts in columns
-            for (int i = 0; i < n; i++) {
-                if (cols[i] > 1) nconflicts += cols[i] - 1;
-            }
-            //Check Conflicts in diagonals
-            for (int i = 0; i < rdiags.length; i++) {
-                if (rdiags[i] > 1) nconflicts += rdiags[i] - 1;
-                if (ldiags[i] > 1) nconflicts += ldiags[i] - 1;
-            }
-            conflicts = nconflicts;
-        }while(conflicts>1);
-    }
-
-    public BoardOptimizedStart(int m, boolean b){
+    public BoardSemiRandomStart(int m) throws IllegalStateException {
         n = m;
         board = new int[n];
         cols = new int[n];
-        ldiags = new int[n*2-1];
-        rdiags = new int[n*2-1];
+        ldiags = new int[n * 2 - 1];
+        rdiags = new int[n * 2 - 1];
+        Stack<Integer> numbers = new Stack<>();
+        for (int i = 0; i < n; i++)
+            numbers.add(i);
+        Collections.shuffle(numbers);
+        for (int i = 0; i < n; i++)
+            board[i] = numbers.pop();
+        for (int i = 0; i < n; i++) {
+            int j = board[i];
+            cols[j]++;
+            ldiags[i > j ? (n - 1) - Math.abs(i - j) : (n - 1 + Math.abs(i - j))]++;
+            rdiags[i + j]++;
+        }
+        int nconflicts = 0;
+        //Check Conflicts in columns
+        for (int i = 0; i < n; i++) {
+            if (cols[i] > 1) nconflicts += cols[i] - 1;
+        }
+        //Check Conflicts in diagonals
+        for (int i = 0; i < rdiags.length; i++) {
+            if (rdiags[i] > 1) nconflicts += rdiags[i] - 1;
+            if (ldiags[i] > 1) nconflicts += ldiags[i] - 1;
+        }
+        conflicts = nconflicts;
     }
-    public String toString(){
+
+    public BoardSemiRandomStart(int m, boolean b) {
+        n = m;
+        board = new int[n];
+        cols = new int[n];
+        ldiags = new int[n * 2 - 1];
+        rdiags = new int[n * 2 - 1];
+    }
+
+    public String toString() {
         StringBuilder str = new StringBuilder();
-        str.append("Conflicts = " + getObjectiveFunction()+"\n") ;
-        for(int i = 0; i < board.length; i++){
+        str.append("Conflicts = " + getObjectiveFunction() + "\n");
+        for (int i = 0; i < board.length; i++) {
             str.append("⬜".repeat(Math.max(0, board[i])));
             str.append("👑");
             str.append("⬜".repeat(Math.max(0, n - 1 - board[i])));
@@ -100,12 +67,13 @@ class BoardOptimizedStart implements Ilayout, Cloneable {
         }
         return str.toString();
     }
+
     public int hashCode() {
         return Arrays.hashCode(cols) + Arrays.hashCode(ldiags) + Arrays.hashCode(rdiags);
     }
 
     public Ilayout getSuccessor() {
-        BoardOptimizedStart clone;
+        BoardSemiRandomStart clone;
         int of = this.getObjectiveFunction();
         ArrayList<Integer> ec = emptyColumns();
         clone = this.clone();
@@ -136,7 +104,7 @@ class BoardOptimizedStart implements Ilayout, Cloneable {
     }
 
 
-     private ArrayList<Integer> emptyColumns(){
+    private ArrayList<Integer> emptyColumns(){
         ArrayList<Integer> list = new ArrayList<>();
         for(int i = 0; i<n; i++)
             if(cols[i]==0) list.add(i);
@@ -147,8 +115,8 @@ class BoardOptimizedStart implements Ilayout, Cloneable {
         return conflicts;
     }
 
-    public BoardOptimizedStart clone() {
-        BoardOptimizedStart clone = new BoardOptimizedStart(n,true);
+    public BoardSemiRandomStart clone() {
+        BoardSemiRandomStart clone = new BoardSemiRandomStart(n,true);
         for(int i = 0; i<n; i++){
             clone.board[i] = this.board[i];
             clone.cols[i] = this.cols[i];
