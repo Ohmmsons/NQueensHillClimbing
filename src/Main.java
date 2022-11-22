@@ -4,12 +4,16 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) throws IOException {
         Scanner sc = new Scanner(System.in);
-        FirstChoiceHillClimb hc = new FirstChoiceHillClimb();
+        HillClimb hc = new HillClimb();
         int n = sc.nextInt();
-        long startTime = System.currentTimeMillis();
-        hc.solve(new BoardOptimizedStart(n));
-        long endTime = System.currentTimeMillis();
-        System.out.println(n +" Queens Problem Solved in " + ((double)(endTime-startTime)/1000) + "seconds");
+        long result = 0;
+        for(int i = 0; i<1; i++){
+            long startTime = System.currentTimeMillis();
+            hc.solve(new NQueensBoard(n));
+            long endTime = System.currentTimeMillis();
+            result+=(endTime-startTime);
+        }
+        System.out.println(n +" Queens Problem Solved in on average " + ((double)(result)/1000) + "seconds");
     }
 }
 

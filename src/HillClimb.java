@@ -1,6 +1,6 @@
 import java.io.*;
 
-public class FirstChoiceHillClimb{
+public class HillClimb{
 
     static class State {
         private Ilayout layout;
@@ -34,10 +34,13 @@ public class FirstChoiceHillClimb{
 
     final public Ilayout solve(Ilayout s) throws IOException {
         State current = new State(s);
+        int counter = 0;
         while (current.getOF()>0) {
             State suc = current.getSuccessor();
-            if(suc.getOF()<=current.getOF())
+            if(suc.getOF()<=current.getOF()){
                 current = suc;
+            }
+
         }
         return current.layout;
     }

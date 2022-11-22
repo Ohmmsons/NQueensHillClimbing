@@ -1,10 +1,10 @@
 import java.util.*;
 
-class BoardRandomStart implements Ilayout, Cloneable {
+class NQueensBoard implements Ilayout, Cloneable {
 
     int n;
     int[] board;
-    int[] cols;
+
     int[] ldiags;
     int[] rdiags;
 
@@ -15,38 +15,43 @@ class BoardRandomStart implements Ilayout, Cloneable {
 
     int conflicts;
 
+    public static void shuffle(int[] arr)
+    {
+        for(int i=arr.length-1;i > 0;i--)
+        {
+            Random rand = new Random();
+            int j = rand.nextInt(i+1);
+            int temp = arr[j];
+            arr[j] = arr[i];
+            arr[i] = temp;
+        }
+    }
+
     //THE BOARD IS MADE UP OF N QUEENS, ALL ON DIFFERENT ROWS TO SIMPLIFY THE PROBLEM
-    public BoardRandomStart(int m) throws IllegalStateException {
+    public NQueensBoard(int m) throws IllegalStateException {
             n = m;
-            board = new int[n];
-            cols = new int[n];
+            board = new int[n];;
             ldiags = new int[n * 2 - 1];
             rdiags = new int[n * 2 - 1];
             for(int i = 0 ; i<n;i ++)
-                board[i]=r.nextInt(n);
+                board[i]=i;
+            shuffle(board);
             for (int i = 0; i < n; i++) {
                 int j = board[i];
-                cols[j]++;
-                ldiags[i-n-1 + j]++;
+                ldiags[n-i-1 + j]++;
                 rdiags[i + j]++;
             }
-            int nconflicts = 0;
-            //Check Conflicts in columns
-            for (int i = 0; i < n; i++) {
-                if (cols[i] > 1) nconflicts += cols[i] - 1;
-            }
+
             //Check Conflicts in diagonals
             for (int i = 0; i < rdiags.length; i++) {
-                if (rdiags[i] > 1) nconflicts += rdiags[i] - 1;
-                if (ldiags[i] > 1) nconflicts += ldiags[i] - 1;
+                if (rdiags[i] > 1) conflicts += rdiags[i] - 1;
+                if (ldiags[i] > 1) conflicts += ldiags[i] - 1;
             }
-            conflicts = nconflicts;
     }
 
-    public BoardRandomStart(int m, boolean b){
+    public NQueensBoard(int m, boolean b){
         n = m;
         board = new int[n];
-        cols = new int[n];
         ldiags = new int[n*2-1];
         rdiags = new int[n*2-1];
     }
@@ -63,63 +68,46 @@ class BoardRandomStart implements Ilayout, Cloneable {
         return str.toString();
     }
     public int hashCode() {
-        return Arrays.hashCode(cols) + Arrays.hashCode(ldiags) + Arrays.hashCode(rdiags);
+        return Arrays.hashCode(board);
     }
 
     public Ilayout getSuccessor() {
-        BoardRandomStart clone;
+        NQueensBoard clone;
         int of = this.getObjectiveFunction();
-        ArrayList<Integer> ec = emptyColumns();
         clone = this.clone();
         int r1 = r.nextInt(n); //linha que vamos selecionar a rainha
         int r2 = r.nextInt(n);
-        if (!ec.isEmpty()) r2 = ec.get(r.nextInt(ec.size()));
         int index = clone.board[r1]; // coluna que a rainha esta
         clone.board[r1] = r2;
-        clone.cols[index]--;//coluna antiga
-        clone.cols[r2]++;//coluna nova
-        int ldiold = r1-n-1 + index;//ldiagonal antiga
-        int ldinew = r1-n-1 + r2;//ldiagonal nova
+        int ldiold = n-r1-1 + index;//ldiagonal antiga
+        int ldinew = n-r1-1 + r2;//ldiagonal nova
         int rdiold = r1 + index;//rdiagonal antiga
         int rdinew = r1 + r2;//rdiagonal nova
         clone.ldiags[ldiold]--;
         clone.rdiags[rdiold]--;
         clone.ldiags[ldinew]++;
         clone.rdiags[rdinew]++;
-        int removedConflictsCols = cols[index] > 1 ? 1 : 0;
         int removedConflictsLDiags = ldiags[ldiold] > 1 ? 1 : 0;
         int removedConflictsRDiags = rdiags[rdiold] > 1 ? 1 : 0;
-        int newConflictsCols = clone.cols[r2] > 1 ? 1 : 0;
         int newConflictsLDiags = clone.ldiags[ldinew] > 1 ? 1 : 0;
         int newConflictsRDiags = clone.rdiags[rdinew] > 1 ? 1 : 0;
-        clone.conflicts -= (removedConflictsCols + removedConflictsLDiags + removedConflictsRDiags);
-        clone.conflicts += newConflictsCols + newConflictsLDiags + newConflictsRDiags;
+        clone.conflicts -= (removedConflictsLDiags + removedConflictsRDiags);
+        clone.conflicts += newConflictsLDiags + newConflictsRDiags;
         return clone;
     }
 
 
-    private ArrayList<Integer> emptyColumns(){
-        ArrayList<Integer> list = new ArrayList<>();
-        for(int i = 0; i<n; i++)
-            if(cols[i]==0) list.add(i);
-        return list;
-    }
 
     public int getObjectiveFunction() {
         return conflicts;
     }
 
-    public BoardRandomStart clone() {
-        BoardRandomStart clone = new BoardRandomStart(n,true);
-        for(int i = 0; i<n; i++){
-            clone.board[i] = this.board[i];
-            clone.cols[i] = this.cols[i];
-        }
+    public NQueensBoard clone() {
+        NQueensBoard clone = new NQueensBoard(n,true);
+        if (n >= 0) System.arraycopy(this.board, 0, clone.board, 0, n);
         clone.conflicts = this.conflicts;
-        for(int i = 0; i<ldiags.length; i++){
-            clone.ldiags[i] = this.ldiags[i];
-            clone.rdiags[i] = this.rdiags[i];
-        }
+        System.arraycopy(this.ldiags, 0, clone.ldiags, 0, ldiags.length);
+        System.arraycopy(this.rdiags, 0, clone.rdiags, 0, rdiags.length);
         return clone;
     }
 }
