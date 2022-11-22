@@ -1,5 +1,10 @@
 import java.util.*;
-
+/**
+ * @author Jude Adam
+ * @author Francisco Antonio
+ * @author Andre Granja
+ * @version 1.0
+ */
 class NQueensBoard implements Ilayout, Cloneable {
 
     int n;
@@ -11,10 +16,11 @@ class NQueensBoard implements Ilayout, Cloneable {
 
     Random r = new Random();
 
-    private record Pair(int x, int y){}
-
     int conflicts;
 
+    /**
+     * Shuffle array elements
+     */
     public static void shuffle(int[] arr)
     {
         for(int i=arr.length-1;i > 0;i--)
@@ -27,6 +33,11 @@ class NQueensBoard implements Ilayout, Cloneable {
         }
     }
 
+    /**
+     * Makes the first play in the game
+     * @param m                 int
+     * @pre m >0
+     */
     //THE BOARD IS MADE UP OF N QUEENS, ALL ON DIFFERENT ROWS TO SIMPLIFY THE PROBLEM
     public NQueensBoard(int m) throws IllegalStateException {
             n = m;
@@ -49,6 +60,12 @@ class NQueensBoard implements Ilayout, Cloneable {
             }
     }
 
+    /**
+     * Makes the first play in the game
+     * @param m                 int
+     * @param b                 boolean
+     * @pre m >0 &amp;&amp; b != null
+     */
     public NQueensBoard(int m, boolean b){
         n = m;
         board = new int[n];
@@ -56,6 +73,10 @@ class NQueensBoard implements Ilayout, Cloneable {
         rdiags = new int[n*2-1];
     }
 
+    /**
+     * Returns a string representation of the object
+     * @return string, which represents the board
+     */
     public String toString(){
         StringBuilder str = new StringBuilder();
         str.append("Conflicts = " + getObjectiveFunction()+"\n") ;
@@ -67,13 +88,19 @@ class NQueensBoard implements Ilayout, Cloneable {
         }
         return str.toString();
     }
+    /**
+     * Returns a hash code value for the object
+     */
     public int hashCode() {
         return Arrays.hashCode(board);
     }
 
+    /**
+     * Returns a random neighbour of the current Ilayout
+     * @return Ilayout
+     */
     public Ilayout getSuccessor() {
         NQueensBoard clone;
-        int of = this.getObjectiveFunction();
         clone = this.clone();
         int r1 = r.nextInt(n); //linha que vamos selecionar a rainha
         int r2 = r.nextInt(n);
@@ -97,11 +124,19 @@ class NQueensBoard implements Ilayout, Cloneable {
     }
 
 
-
+    /**
+     * Returns the number of conflicts of the current Ilayout
+     * @return int which is the number of conflicts
+     */
     public int getObjectiveFunction() {
         return conflicts;
     }
 
+
+    /**
+     * Creates and returns a copy of this object
+     * @return copy of NqueensBoard
+     */
     public NQueensBoard clone() {
         NQueensBoard clone = new NQueensBoard(n,true);
         if (n >= 0) System.arraycopy(this.board, 0, clone.board, 0, n);

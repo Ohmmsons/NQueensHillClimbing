@@ -1,7 +1,16 @@
 import java.io.IOException;
 import java.util.Scanner;
-
+/**
+ * @author Jude Adam
+ * @author Francisco Antonio
+ * @author Andre Granja
+ * @version 1.0
+ */
 public class Main {
+    /**
+     * Main function, where we initialize the nqueens
+     * @param args              String[]
+     */
     public static void main(String[] args) throws IOException {
         Scanner sc = new Scanner(System.in);
         HillClimb hc = new HillClimb();
