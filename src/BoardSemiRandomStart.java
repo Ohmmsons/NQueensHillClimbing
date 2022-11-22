@@ -14,6 +14,17 @@ class BoardSemiRandomStart implements Ilayout, Cloneable {
     private record Pair(int x, int y) {
     }
 
+    public static void shuffle(int arr[])
+    {
+        for(int i=arr.length-1;i > 0;i--)
+        {
+            Random rand = new Random();
+            int j = rand.nextInt(i+1);
+            int temp = arr[j];
+            arr[j] = arr[i];
+            arr[i] = temp;
+        }
+    }
     int conflicts;
 
     //THE BOARD IS MADE UP OF N QUEENS, ALL ON DIFFERENT ROWS TO SIMPLIFY THE PROBLEM
@@ -23,16 +34,13 @@ class BoardSemiRandomStart implements Ilayout, Cloneable {
         cols = new int[n];
         ldiags = new int[n * 2 - 1];
         rdiags = new int[n * 2 - 1];
-        Stack<Integer> numbers = new Stack<>();
         for (int i = 0; i < n; i++)
-            numbers.add(i);
-        Collections.shuffle(numbers);
-        for (int i = 0; i < n; i++)
-            board[i] = numbers.pop();
+            board[i] = i;
+        shuffle(board);
         for (int i = 0; i < n; i++) {
             int j = board[i];
             cols[j]++;
-            ldiags[i-n-1 + j]++;
+            ldiags[n-i-1 + j]++;
             rdiags[i + j]++;
         }
         int nconflicts = 0;
@@ -84,8 +92,8 @@ class BoardSemiRandomStart implements Ilayout, Cloneable {
         clone.board[r1] = r2;
         clone.cols[index]--;//coluna antiga
         clone.cols[r2]++;//coluna nova
-        int ldiold = r1-n-1 + index;//ldiagonal antiga
-        int ldinew = r1-n-1 + r2;//ldiagonal nova
+        int ldiold = n-r1-1 + index;//ldiagonal antiga
+        int ldinew = n-r1-1 + r2;//ldiagonal nova
         int rdiold = r1 + index;//rdiagonal antiga
         int rdinew = r1 + r2;//rdiagonal nova
         clone.ldiags[ldiold]--;
