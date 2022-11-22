@@ -57,6 +57,28 @@ class NQueensBoard implements Ilayout, Cloneable {
         }
         conflicts = countConflicts();
     }
+    /**
+     * Creates the initial state of the board with array a
+     *
+     * @param m
+     * @param a int[]
+     * @pre m >0
+     */
+    public NQueensBoard(int m,int[] a) throws IllegalStateException {
+        n = m;
+        board = new int[n];
+        ldiags = new int[n * 2 - 1];
+        rdiags = new int[n * 2 - 1];
+        cols = new int[n];
+        System.arraycopy(a,0,board,0,n);
+        for (int i = 0; i < n; i++) {
+            int j = board[i];
+            cols[j]++;
+            ldiags[n - i - 1 + j]++;
+            rdiags[i + j]++;
+        }
+        conflicts = countConflicts();
+    }
 
     /**
      * @return ArrayList<Integer> which is the list of empty columns in the board
@@ -98,6 +120,8 @@ class NQueensBoard implements Ilayout, Cloneable {
         rdiags = new int[n * 2 - 1];
         cols = new int[n];
     }
+
+
 
     /**
      * Returns a string representation of the object
