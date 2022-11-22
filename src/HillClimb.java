@@ -49,7 +49,7 @@ public class HillClimb{
 
         /**
          * Indicates whether some other object is "equal to" this one
-         * @param o                     Object
+         * @param o Object
          * @return boolean which is true if this object is the same as the obj argument, false otherwise
          */
         public boolean equals(Object o) {
@@ -62,7 +62,7 @@ public class HillClimb{
 
     /**
      * While loop to find a state whose conflicts=0, whenever a state has fewer conflicts than the current, current = state
-     * @param s                 Ilayout
+     * @params  layout
      * @return  Ilayout, which represents a Ilayout whose conflicts=0
      * @throws IOException
      */

@@ -1,4 +1,5 @@
 import java.util.*;
+
 /**
  * @author Jude Adam
  * @author Francisco Antonio
@@ -12,7 +13,8 @@ class NQueensBoard implements Ilayout, Cloneable {
 
     int[] ldiags;
     int[] rdiags;
-
+    int[] cols;
+    NQueensBoard father;
 
     Random r = new Random();
 
@@ -21,12 +23,10 @@ class NQueensBoard implements Ilayout, Cloneable {
     /**
      * Shuffle array elements
      */
-    public static void shuffle(int[] arr)
-    {
-        for(int i=arr.length-1;i > 0;i--)
-        {
+    public static void shuffle(int[] arr) {
+        for (int i = arr.length - 1; i > 0; i--) {
             Random rand = new Random();
-            int j = rand.nextInt(i+1);
+            int j = rand.nextInt(i + 1);
             int temp = arr[j];
             arr[j] = arr[i];
             arr[i] = temp;
@@ -34,60 +34,88 @@ class NQueensBoard implements Ilayout, Cloneable {
     }
 
     /**
-     * Makes the first play in the game
-     * @param m                 int
+     * Creates the initial state of the board
+     *
+     * @param m int
      * @pre m >0
      */
-    //THE BOARD IS MADE UP OF N QUEENS, ALL ON DIFFERENT ROWS TO SIMPLIFY THE PROBLEM
     public NQueensBoard(int m) throws IllegalStateException {
-            n = m;
-            board = new int[n];;
-            ldiags = new int[n * 2 - 1];
-            rdiags = new int[n * 2 - 1];
-            for(int i = 0 ; i<n;i ++)
-                board[i]=i;
-            shuffle(board);
-            for (int i = 0; i < n; i++) {
-                int j = board[i];
-                ldiags[n-i-1 + j]++;
-                rdiags[i + j]++;
-            }
+        n = m;
+        board = new int[n];
+        ldiags = new int[n * 2 - 1];
+        rdiags = new int[n * 2 - 1];
+        cols = new int[n];
 
-            //Check Conflicts in diagonals
-            for (int i = 0; i < rdiags.length; i++) {
-                if (rdiags[i] > 1) conflicts += rdiags[i] - 1;
-                if (ldiags[i] > 1) conflicts += ldiags[i] - 1;
-            }
+        for (int i = 0; i < n; i++)
+            board[i] = i;
+        shuffle(board);
+        for (int i = 0; i < n; i++) {
+            int j = board[i];
+            cols[j]++;
+            ldiags[n - i - 1 + j]++;
+            rdiags[i + j]++;
+        }
+        conflicts = countConflicts();
+    }
+
+    /**
+     * @return ArrayList<Integer> which is the list of empty columns in the board
+     */
+    private ArrayList<Integer> emptyColumns() {
+        ArrayList<Integer> list = new ArrayList<>();
+        for (int i = 0; i < n; i++)
+            if (cols[i] == 0) list.add(i);
+        return list;
+    }
+
+    /**
+     * @return number of conflicts in board by counting number of queens in each diagonal and subtracting 1 if there is more than 1 queen in it
+     */
+    public int countConflicts() {
+        int nconflicts = 0;
+        //Check Conflicts in diagonals
+        for (int i = 0; i < n; i++) {
+            if (cols[i] > 1) nconflicts += cols[i] - 1;
+        }
+        for (int i = 0; i < rdiags.length; i++) {
+            if (rdiags[i] > 1) nconflicts += rdiags[i] - 1;
+            if (ldiags[i] > 1) nconflicts += ldiags[i] - 1;
+        }
+        return nconflicts;
     }
 
     /**
      * Makes the first play in the game
-     * @param m                 int
-     * @param b                 boolean
+     *
+     * @param m int
+     * @param b boolean
      * @pre m >0 &amp;&amp; b != null
      */
-    public NQueensBoard(int m, boolean b){
+    public NQueensBoard(int m, boolean b) {
         n = m;
         board = new int[n];
-        ldiags = new int[n*2-1];
-        rdiags = new int[n*2-1];
+        ldiags = new int[n * 2 - 1];
+        rdiags = new int[n * 2 - 1];
+        cols = new int[n];
     }
 
     /**
      * Returns a string representation of the object
+     *
      * @return string, which represents the board
      */
-    public String toString(){
+    public String toString() {
         StringBuilder str = new StringBuilder();
-        str.append("Conflicts = " + getObjectiveFunction()+"\n") ;
-        for(int i = 0; i < board.length; i++){
-            str.append("⬜".repeat(Math.max(0, board[i])));
+        str.append("Conflicts = ").append(getObjectiveFunction()).append("\n");
+        for (int j : board) {
+            str.append("⬜".repeat(Math.max(0, j)));
             str.append("👑");
-            str.append("⬜".repeat(Math.max(0, n - 1 - board[i])));
+            str.append("⬜".repeat(Math.max(0, n - 1 - j)));
             str.append("\n");
         }
         return str.toString();
     }
+
     /**
      * Returns a hash code value for the object
      */
@@ -97,35 +125,52 @@ class NQueensBoard implements Ilayout, Cloneable {
 
     /**
      * Returns a random neighbour of the current Ilayout
+     *
      * @return Ilayout
      */
     public Ilayout getSuccessor() {
         NQueensBoard clone;
         clone = this.clone();
-        int r1 = r.nextInt(n); //linha que vamos selecionar a rainha
-        int r2 = r.nextInt(n);
-        int index = clone.board[r1]; // coluna que a rainha esta
-        clone.board[r1] = r2;
-        int ldiold = n-r1-1 + index;//ldiagonal antiga
-        int ldinew = n-r1-1 + r2;//ldiagonal nova
-        int rdiold = r1 + index;//rdiagonal antiga
-        int rdinew = r1 + r2;//rdiagonal nova
+        clone.father = this;
+        List<Integer> ec = emptyColumns();
+        int row = r.nextInt(n); //linha que vamos selecionar a rainha
+        int colnew;
+        if (!ec.isEmpty()) colnew = ec.get(r.nextInt(ec.size()));
+        else colnew = r.nextInt(n);
+        int colold = clone.board[row];
+        clone.board[row] = colnew;
+        int ldiold = n - row - 1 + colold;//ldiagonal antiga
+        int ldinew = n - row - 1 + colnew;//ldiagonal nova
+        int rdiold = row + colold;//rdiagonal antiga
+        int rdinew = row + colnew;//rdiagonal nova
+        clone.cols[colold]--;
+        clone.cols[colnew]++;
         clone.ldiags[ldiold]--;
         clone.rdiags[rdiold]--;
         clone.ldiags[ldinew]++;
         clone.rdiags[rdinew]++;
-        int removedConflictsLDiags = ldiags[ldiold] > 1 ? 1 : 0;
-        int removedConflictsRDiags = rdiags[rdiold] > 1 ? 1 : 0;
-        int newConflictsLDiags = clone.ldiags[ldinew] > 1 ? 1 : 0;
-        int newConflictsRDiags = clone.rdiags[rdinew] > 1 ? 1 : 0;
-        clone.conflicts -= (removedConflictsLDiags + removedConflictsRDiags);
-        clone.conflicts += newConflictsLDiags + newConflictsRDiags;
+        clone.updateConflicts(colold, colnew, ldiold, rdiold, ldinew, rdinew);
         return clone;
+    }
+
+    /**
+     * updates conflicts of board after change
+     */
+    public void updateConflicts(int colold, int colnew, int ldiold, int rdiold, int ldinew, int rdinew) {
+        int removedConflictsCols = father.cols[colold] > 1 ? 1 : 0;
+        int newConflictsCols = this.cols[colnew] > 1 ? 1 : 0;
+        int removedConflictsLDiags = father.ldiags[ldiold] > 1 ? 1 : 0;
+        int removedConflictsRDiags = father.rdiags[rdiold] > 1 ? 1 : 0;
+        int newConflictsLDiags = this.ldiags[ldinew] > 1 ? 1 : 0;
+        int newConflictsRDiags = this.rdiags[rdinew] > 1 ? 1 : 0;
+        conflicts -= (removedConflictsCols + removedConflictsLDiags + removedConflictsRDiags);
+        conflicts += newConflictsCols + newConflictsLDiags + newConflictsRDiags;
     }
 
 
     /**
      * Returns the number of conflicts of the current Ilayout
+     *
      * @return int which is the number of conflicts
      */
     public int getObjectiveFunction() {
@@ -135,12 +180,14 @@ class NQueensBoard implements Ilayout, Cloneable {
 
     /**
      * Creates and returns a copy of this object
+     *
      * @return copy of NqueensBoard
      */
     public NQueensBoard clone() {
-        NQueensBoard clone = new NQueensBoard(n,true);
+        NQueensBoard clone = new NQueensBoard(n, true);
         if (n >= 0) System.arraycopy(this.board, 0, clone.board, 0, n);
         clone.conflicts = this.conflicts;
+        System.arraycopy(this.cols, 0, clone.cols, 0, cols.length);
         System.arraycopy(this.ldiags, 0, clone.ldiags, 0, ldiags.length);
         System.arraycopy(this.rdiags, 0, clone.rdiags, 0, rdiags.length);
         return clone;
