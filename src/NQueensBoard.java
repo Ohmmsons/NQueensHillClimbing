@@ -168,12 +168,6 @@ class NQueensBoard implements Ilayout, Cloneable {
         int ldinew = n - row - 1 + colnew;//ldiagonal nova
         int rdiold = row + colold;//rdiagonal antiga
         int rdinew = row + colnew;//rdiagonal nova
-        clone.cols[colold]--;
-        clone.cols[colnew]++;
-        clone.ldiags[ldiold]--;
-        clone.rdiags[rdiold]--;
-        clone.ldiags[ldinew]++;
-        clone.rdiags[rdinew]++;
         clone.updateConflicts(colold, colnew, ldiold, rdiold, ldinew, rdinew);
         return clone;
     }
@@ -182,6 +176,12 @@ class NQueensBoard implements Ilayout, Cloneable {
      * updates conflicts of board after change
      */
     public void updateConflicts(int colold, int colnew, int ldiold, int rdiold, int ldinew, int rdinew) {
+        cols[colold]--;
+        cols[colnew]++;
+        ldiags[ldiold]--;
+        rdiags[rdiold]--;
+        ldiags[ldinew]++;
+        rdiags[rdinew]++;
         int removedConflictsCols = father.cols[colold] > 1 ? 1 : 0;
         int newConflictsCols = this.cols[colnew] > 1 ? 1 : 0;
         int removedConflictsLDiags = father.ldiags[ldiold] > 1 ? 1 : 0;

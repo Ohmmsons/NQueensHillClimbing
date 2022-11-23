@@ -62,15 +62,20 @@ public class NQueensUnitTests {
         int n = 4;
         NQueensBoard board = new NQueensBoard(n, a);
         assertEquals(board.getObjectiveFunction(), 1); // 1 conflict
-        int row = 3; int colold = 0; int colnew = 2; board.setFather();
-        board.updateConflicts(colold, colnew, n-row-1+colold, n-row-1+colnew, row+colold, row+colnew);
-        assertEquals(board.getObjectiveFunction(), 0); // 0 conflicts
+        int row = 3; int colold = 0; int colnew = 3;
+        NQueensBoard clone = board.clone();
+        clone.father = board;
+        clone.updateConflicts(colold, colnew, n-row-1+colold, row+colold, n-row-1+colnew, row+colnew);
+        assertEquals(clone.getObjectiveFunction(), 1); // 1 conflicts
 
         int b[] = {1,2,0,0};
         board = new NQueensBoard(n, b);
         assertEquals(board.getObjectiveFunction(), 3); // 3 conflict
-        colnew = 3; board.setFather();
-        board.updateConflicts(colold, colnew, n-row-1+colold, n-row-1+colnew, row+colold, row+colnew);
-        assertEquals(board.getObjectiveFunction(),1); // 1 conflict
+        row = 3;
+        colnew = 3;
+        clone = board.clone();
+        clone.father = board;
+        clone.updateConflicts(colold, colnew, n-row-1+colold, row+colold, n-row-1+colnew, row+colnew);
+        assertEquals(clone.getObjectiveFunction(),1); // 1 conflict
     }
 }
