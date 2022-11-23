@@ -1,0 +1,4 @@
+Vamos usar um Hill Climbing search algorithm, isto é um algoritmo que começa num state aleatório e vai melhorando ele iterativatemente.
+Neste caso de NQueens vamos ter um board NxN com uma rainha em cada linha, cada uma numa coluna aleatoria, a partir daí vão-se criando sucessores aleatórios movendo uma das rainhas para uma posição qualquer na mesma linha.
+Isto vai ocorrer até encontrar um sucessor com um número de conflitos menor. O número de conflitos é calculado vendo quantas rainhas há por cada coluna e por cada diagonal, se houver mais do que 1 rainha numa destas existe pelo menos um conflito (há 1 conflito por cada rainha a mais).
+Este processo vai continuar até encontrar um sucessor com 0 conflitos, ou seja, a solução. 
