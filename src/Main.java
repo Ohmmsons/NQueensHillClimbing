@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.util.Scanner;
 /**
+ * Main
  * @author Jude Adam
  * @author Francisco Antonio
  * @author Andre Granja

@@ -1,4 +1,5 @@
 /**
+ * NQueens Unit Tests
  * @author Jude Adam
  * @author Francisco Antonio
  * @author Andre Granja
