@@ -1,6 +1,7 @@
 import java.io.*;
 
 /**
+ * HillClimb
  * @author Jude Adam
  * @author Francisco Antonio
  * @author Andre Granja
@@ -13,6 +14,10 @@ public class HillClimb{
         private Ilayout layout;
         private double of;
 
+        /**
+         * Constructor of State
+         * @param l         Ilayout
+         */
         public State(Ilayout l) {
             layout = l;
             of = l.getObjectiveFunction();
@@ -62,7 +67,7 @@ public class HillClimb{
 
     /**
      * While loop to find a state whose conflicts=0, whenever a state has fewer conflicts than the current, current = state
-     * @params  layout
+     * @param  s           ILayout
      * @return  Ilayout, which represents a Ilayout whose conflicts=0
      * @throws IOException
      */

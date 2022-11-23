@@ -1,6 +1,7 @@
 import java.util.*;
 
 /**
+ * NQueensBoard
  * @author Jude Adam
  * @author Francisco Antonio
  * @author Andre Granja
