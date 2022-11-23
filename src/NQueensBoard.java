@@ -83,7 +83,7 @@ class NQueensBoard implements Ilayout, Cloneable {
     /**
      * @return ArrayList<Integer> which is the list of empty columns in the board
      */
-    private ArrayList<Integer> emptyColumns() {
+    protected ArrayList<Integer> emptyColumns() {
         ArrayList<Integer> list = new ArrayList<>();
         for (int i = 0; i < n; i++)
             if (cols[i] == 0) list.add(i);
@@ -215,5 +215,10 @@ class NQueensBoard implements Ilayout, Cloneable {
         System.arraycopy(this.ldiags, 0, clone.ldiags, 0, ldiags.length);
         System.arraycopy(this.rdiags, 0, clone.rdiags, 0, rdiags.length);
         return clone;
+    }
+
+    // Test purposes only!
+    protected void setFather() {
+        father = this;
     }
 }
